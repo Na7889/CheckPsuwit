@@ -70,7 +70,7 @@ const close=v=>{m.classList.add('out');setTimeout(()=>m.remove(),200);res(v)};m.
 const confirmBox=(t,msg,ok)=>modal(t,`<p>${msg}</p>`,ok||'ยืนยัน',()=>true);
 function burst(e){const r=e.target.getBoundingClientRect();for(let i=0;i<14;i++){const s=document.createElement('span');s.className='pf';s.textContent=['✨','🎉','⭐'][i%3];s.style.cssText=`left:${r.left+r.width/2}px;top:${r.top}px;--x:${(Math.random()-.5)*240}px;--y:${-60-Math.random()*140}px`;document.body.append(s);setTimeout(()=>s.remove(),1000)}}
 
-const API_URL='https://script.google.com/macros/s/AKfycbw_i9jtEjs2sScseblgD9RICY7ZMatkotCNy2kDiXA088YDcKkWNRw1k-lgFOtJfAHY/exec'; // URL ที่ได้จากการ Deploy Apps Script (ลงท้ายด้วย /exec)
+const API_URL='https://script.google.com/macros/s/AKfycbzDnEljFJZcCqpyJXjudRKE3Y7_G0_NM3lypZRmELp2G97ygIZnRB8tyys4LwdlOFZr/exec'; // URL ที่ได้จากการ Deploy Apps Script (ลงท้ายด้วย /exec)
 function api(a,p){busy++;$('#bar').style.width='70%';
 return fetch(API_URL,{method:'POST',body:JSON.stringify({a,t:T,p:p||{}})}).then(r=>r.json()).then(r=>{end();if(r&&r.auth)logout(1);if(r&&r.err){toast(r.err,'e');return null}return r})
 .catch(()=>{end();toast('เชื่อมต่อเซิร์ฟเวอร์ไม่ได้ ตรวจสอบ API_URL และการ Deploy','e');return null})}
