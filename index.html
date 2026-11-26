@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NW Class Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@500;600&family=Sarabun:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#14284b;--navy2:#22407a;--gold:#b8923a;--bg:#f6f7fa;--card:#fff;--ink:#1c2433;--mut:#6b7488;--line:#e3e7ef;--ok:#1f8a5b;--warn:#c27b12;--bad:#c0392b}
+*{box-sizing:border-box}body{margin:0;font:16px/1.55 Sarabun,sans-serif;background:var(--bg);color:var(--ink)}
+h1,h2,h3{font-family:Prompt,sans-serif;margin:0 0 .6rem;color:var(--navy)}h2{font-size:1.25rem}h3{font-size:1.05rem}
+.btn{font:inherit;font-weight:500;border:0;background:var(--navy);color:#fff;padding:.55rem 1.1rem;border-radius:10px;cursor:pointer;transition:transform .15s,background .2s}
+.btn:hover{background:var(--navy2)}.btn:active{transform:scale(.96)}.btn.gold{background:var(--gold)}.btn.ghost{background:transparent;color:var(--navy);border:1px solid var(--line)}
+.btn.sm{padding:.25rem .7rem;font-size:.9rem}.btn.bad{background:var(--bad)}.btn.ok{background:var(--ok)}
+input,select{font:inherit;width:100%;padding:.55rem .7rem;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+input:focus,select:focus,.btn:focus-visible{outline:2px solid var(--gold);outline-offset:1px}
+label.f{display:block;font-size:.88rem;color:var(--mut);margin-bottom:.7rem}label.f input,label.f select{margin-top:.2rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:1.2rem;margin-bottom:1rem}
+.g3{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:0 .9rem}
+.row{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap}.sp{flex:1}.mut{color:var(--mut);font-size:.9rem}
+table{width:100%;border-collapse:collapse}th,td{padding:.55rem .5rem;text-align:left;border-bottom:1px solid var(--line);font-size:.95rem}th{color:var(--mut);font-weight:500}.tw{overflow-x:auto}
+.badge{display:inline-block;padding:.1rem .65rem;border-radius:99px;font-size:.82rem;background:#eef1f7;color:var(--navy)}
+.badge.done,.badge.approved{background:#e0f3ea;color:var(--ok)}.badge.late,.badge.pending.u{background:#fdf0d8;color:var(--warn)}.badge.rejected,.badge.over{background:#fbe3df;color:var(--bad)}
+/* auth */
+#auth{min-height:100vh;display:grid;grid-template-columns:1.1fr 1fr}
+.hero{background:var(--navy);color:#fff;padding:3rem;display:flex;flex-direction:column;justify-content:center}
+.hero h1{color:#fff;font-size:2.4rem;line-height:1.25}.hero p{color:#c4cde2;max-width:30ch}
+.hero .stack{margin-top:2rem;display:flex;gap:.6rem}.hero .stack i{width:44px;height:6px;border-radius:3px;background:var(--gold);animation:grow 1.4s ease-out both}.hero .stack i:nth-child(2){animation-delay:.2s;opacity:.7}.hero .stack i:nth-child(3){animation-delay:.4s;opacity:.4}
+@keyframes grow{from{width:0}}
+.box{padding:2.5rem;display:flex;flex-direction:column;justify-content:center;max-width:430px;width:100%;margin:auto}
+.tabs{display:flex;gap:.3rem;margin-bottom:1rem;border-bottom:1px solid var(--line)}
+.tab{background:none;border:0;font:inherit;padding:.6rem 1rem;color:var(--mut);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-1px;transition:color .2s}.tab.on{color:var(--navy);border-color:var(--gold);font-weight:600}
+/* app */
+header{background:var(--navy);color:#fff;padding:.7rem 1.2rem;display:flex;align-items:center;gap:1rem;position:sticky;top:0;z-index:5}
+header b{font-family:Prompt;font-weight:600}header .btn{background:rgba(255,255,255,.14)}
+nav{display:flex;gap:.3rem;padding:0 1rem;background:#fff;border-bottom:1px solid var(--line);overflow-x:auto}
+main{max-width:1000px;margin:1.2rem auto;padding:0 1rem}.swap{animation:sw .35s ease-out}@keyframes sw{from{opacity:0;transform:translateY(8px)}}
+.nudge{background:#fbf6e8;border-left:4px solid var(--gold);padding:.7rem 1rem;border-radius:8px;margin-bottom:1rem}
+.chips{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1rem}.ch{border:1px solid var(--line);background:#fff;border-radius:99px;padding:.2rem .9rem;cursor:pointer;font:inherit;font-size:.9rem}.ch.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.att label{display:inline-block;margin-right:.3rem}.att input{display:none}.att span{display:inline-block;padding:.15rem .8rem;border:1px solid var(--line);border-radius:99px;cursor:pointer;font-size:.9rem;transition:all .15s}
+.att input:checked+span{color:#fff;border-color:transparent;background:var(--ok)}.att .x input:checked+span{background:var(--bad)}.att .l input:checked+span{background:var(--warn)}.att .v input:checked+span{background:var(--navy2)}
+.task{display:flex;gap:1rem;align-items:center;border:1px solid var(--line);border-radius:12px;padding:.8rem 1rem;margin-bottom:.6rem;background:#fff}
+.ring{width:130px;height:130px}.ring circle{fill:none;stroke-width:10;stroke-linecap:round}.ring .t{stroke:var(--line)}.ring .v{stroke:var(--gold);stroke-dasharray:264;transition:stroke-dashoffset 1.2s ease}
+/* overlays */
+.ov{position:fixed;inset:0;background:rgba(20,40,75,.45);display:grid;place-items:center;z-index:20;animation:fi .2s}.ov.out{opacity:0;transition:opacity .2s}
+.md{background:#fff;border-radius:16px;padding:1.4rem;width:min(520px,92vw);max-height:90vh;overflow:auto;animation:pop .25s cubic-bezier(.2,1.3,.4,1)}.ma{display:flex;justify-content:flex-end;gap:.5rem;margin-top:1rem}
+@keyframes fi{from{opacity:0}}@keyframes pop{from{transform:scale(.9);opacity:0}}
+#toasts{position:fixed;top:1rem;right:1rem;z-index:30;display:flex;flex-direction:column;gap:.5rem}
+.toast{background:#fff;border-left:5px solid var(--navy);padding:.7rem 1rem;border-radius:10px;box-shadow:0 8px 24px rgba(20,40,75,.18);animation:ti .3s ease-out;max-width:320px;display:flex;gap:.5rem}
+.toast.s{border-color:var(--ok)}.toast.e{border-color:var(--bad)}.toast.out{opacity:0;transform:translateX(30px);transition:.3s}@keyframes ti{from{transform:translateX(40px);opacity:0}}
+#bar{position:fixed;top:0;left:0;height:3px;background:var(--gold);width:0;z-index:40;transition:width .3s}
+.pf{position:fixed;pointer-events:none;z-index:50;font-size:1.3rem;animation:pf 1s ease-out forwards}@keyframes pf{to{transform:translate(var(--x),var(--y)) rotate(200deg);opacity:0}}
+@media(max-width:760px){#auth{grid-template-columns:1fr}.hero{padding:1.5rem}.hero h1{font-size:1.6rem}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head><body>
+<div id="bar"></div><div id="toasts"></div><div id="root"></div>
+<script>
+const $=s=>document.querySelector(s);let T=null,U=null,D={},busy=0;
+const GR=['วิทยาศาสตร์','คณิตศาสตร์','ภาษาต่างประเทศ','สังคมศึกษาและวัฒนธรรม','การงานอาชีพและเทคโนโลยี','ภาษาไทย','ศิลปะ','สุขศึกษาและพละศึกษา'];
+const ROLE={teacher:'คุณครู',academic:'ฝ่ายวิชาการ',student:'นักเรียน',admin:'ผู้ดูแลระบบ'};
+const ST=['มา','ขาด','สาย','ลา'],CLS=['','x','l','v'];
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const today=()=>new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,10);
+const lvOpts=v=>[1,2,3,4,5,6].map(g=>`<optgroup label="มัธยมศึกษาปีที่ ${g}">${Array.from({length:12},(_,i)=>`<option ${v==`ม.${g}/${i+1}`?'selected':''}>ม.${g}/${i+1}</option>`).join('')}</optgroup>`).join('');
+const fld=(l,n,v='',t='text')=>`<label class="f">${l}<input name="${n}" type="${t}" value="${esc(v)}"></label>`;
+const sel=(l,n,o,v)=>`<label class="f">${l}<select name="${n}">${o.map(x=>{x=Array.isArray(x)?x:[x,x];return`<option value="${esc(x[0])}" ${x[0]==v?'selected':''}>${esc(x[1])}</option>`}).join('')}</select></label>`;
+const lvSel=(l,n,v)=>`<label class="f">${l}<select name="${n}">${lvOpts(v)}</select></label>`;
+const fv=m=>{const o={};m.querySelectorAll('[name]').forEach(e=>o[e.name]=e.value);return o};
+
+function toast(m,t='i'){const d=document.createElement('div');d.className='toast '+t;d.innerHTML=`<b>${{s:'✓',e:'!',i:'i'}[t]}</b><span>${esc(m)}</span>`;$('#toasts').append(d);setTimeout(()=>{d.classList.add('out');setTimeout(()=>d.remove(),300)},3300)}
+function modal(title,body,ok='ยืนยัน',get){return new Promise(res=>{const m=document.createElement('div');m.className='ov';m.innerHTML=`<div class="md"><h3>${title}</h3><div>${body}</div><div class="ma"><button class="btn ghost" id="mc">ยกเลิก</button><button class="btn" id="mo">${ok}</button></div></div>`;document.body.append(m);
+const close=v=>{m.classList.add('out');setTimeout(()=>m.remove(),200);res(v)};m.querySelector('#mc').onclick=()=>close(null);m.querySelector('#mo').onclick=()=>close(get?get(m):fv(m));m.onclick=e=>{if(e.target==m)close(null)};const f=m.querySelector('input,select');f&&f.focus()})}
+const confirmBox=(t,msg,ok)=>modal(t,`<p>${msg}</p>`,ok||'ยืนยัน',()=>true);
+function burst(e){const r=e.target.getBoundingClientRect();for(let i=0;i<14;i++){const s=document.createElement('span');s.className='pf';s.textContent=['✨','🎉','⭐'][i%3];s.style.cssText=`left:${r.left+r.width/2}px;top:${r.top}px;--x:${(Math.random()-.5)*240}px;--y:${-60-Math.random()*140}px`;document.body.append(s);setTimeout(()=>s.remove(),1000)}}
+
+const API_URL='https://script.google.com/macros/s/AKfycbw_i9jtEjs2sScseblgD9RICY7ZMatkotCNy2kDiXA088YDcKkWNRw1k-lgFOtJfAHY/exec'; // URL ที่ได้จากการ Deploy Apps Script (ลงท้ายด้วย /exec)
+function api(a,p){busy++;$('#bar').style.width='70%';
+return fetch(API_URL,{method:'POST',body:JSON.stringify({a,t:T,p:p||{}})}).then(r=>r.json()).then(r=>{end();if(r&&r.auth)logout(1);if(r&&r.err){toast(r.err,'e');return null}return r})
+.catch(()=>{end();toast('เชื่อมต่อเซิร์ฟเวอร์ไม่ได้ ตรวจสอบ API_URL และการ Deploy','e');return null})}
+function end(){if(--busy<=0){$('#bar').style.width='100%';setTimeout(()=>$('#bar').style.width=0,250)}}
+
+/* ---------- Auth ---------- */
+function authView(mode='in'){
+$('#root').innerHTML=`<div id="auth"><div class="hero"><h1>ติดตามงาน<br>เช็คชื่อ ส่งงาน<br>ในที่เดียว</h1><p>ระบบสำหรับคุณครู ฝ่ายวิชาการ และนักเรียน</p><div class="stack"><i></i><i></i><i></i></div></div>
+<div class="box"><div class="tabs"><button class="tab ${mode=='in'?'on':''}" onclick="authView('in')">เข้าสู่ระบบ</button><button class="tab ${mode=='up'?'on':''}" onclick="authView('up')">ลงทะเบียน</button><button class="tab ${mode=='ad'?'on':''}" onclick="authView('ad')">ผู้ดูแลระบบ</button></div><div id="af">
+${mode=='in'?fld('ชื่อผู้ใช้ (นักเรียนใช้รหัสนักเรียน)','username')+fld('รหัสผ่าน','password','','password')+'<button class="btn" style="width:100%" onclick="doLogin()">เข้าสู่ระบบ</button>':''}
+${mode=='up'?sel('บทบาท','role',[['student','นักเรียน'],['teacher','คุณครู'],['academic','ฝ่ายวิชาการ']])+fld('ชื่อผู้ใช้ (นักเรียนใช้รหัสนักเรียน)','username')+fld('ชื่อ-นามสกุล (ครูใช้ชื่อให้ตรงกับที่ฝ่ายวิชาการจะเลือก)','name')+fld('รหัสผ่าน','password','','password')+'<button class="btn" style="width:100%" onclick="doReg()">ส่งคำขอลงทะเบียน</button><p class="mut">ทุกบัญชีต้องรอแอดมินอนุมัติก่อนเข้าใช้งาน</p>':''}
+${mode=='ad'?fld('Key ผู้ดูแลระบบ','key','','password')+'<button class="btn gold" style="width:100%" onclick="doAdmin()">เข้าสู่ระบบแอดมิน</button>':''}
+</div></div></div>`;
+document.querySelectorAll('#af input').forEach(i=>i.onkeydown=e=>{if(e.key=='Enter')document.querySelector('#af .btn').click()})}
+const af=()=>fv($('#af'));
+async function doLogin(){enter(await api('login',af()))}
+async function doAdmin(){enter(await api('login',af()))}
+async function doReg(){const r=await api('register',af());if(r){await modal('ส่งคำขอแล้ว','<p>รอแอดมินอนุมัติ แล้วจึงเข้าสู่ระบบได้</p>','เข้าใจแล้ว',()=>1);authView('in')}}
+function enter(r){if(!r)return;T=r.token;U=r.user;toast('ยินดีต้อนรับ '+U.name,'s');shell()}
+function logout(x){T=U=null;if(x)toast('กรุณาเข้าสู่ระบบอีกครั้ง','i');authView()}
+
+/* ---------- Shell ---------- */
+const NAV={admin:[['คำขอและผู้ใช้',vAdmin]],academic:[['รายวิชา',vSubjects],['นักเรียน',vStudents],['สรุปการเช็คชื่อ',vSummary]],teacher:[['เช็คชื่อ',vCheck],['ภาระงาน',vTasks]],student:[['งานของฉัน',vMine],['สรุป',vStats]]};
+function shell(){$('#root').innerHTML=`<header><b>NW Class Tracker</b><span class="sp"></span><span>${esc(U.name)} <span class="badge">${ROLE[U.role]}</span></span><button class="btn sm" onclick="logout()">ออก</button></header><nav>${NAV[U.role].map((n,i)=>`<button class="tab" id="t${i}" onclick="go(${i})">${n[0]}</button>`).join('')}</nav><main id="main"></main>`;go(0)}
+async function go(i){document.querySelectorAll('nav .tab').forEach((t,j)=>t.classList.toggle('on',i==j));const m=$('#main');m.innerHTML='';const d=document.createElement('div');d.className='swap';m.append(d);await NAV[U.role][i][1](d)}
+const reload=()=>{const i=[...document.querySelectorAll('nav .tab')].findIndex(t=>t.classList.contains('on'));go(i)};
+const mk=(h,id)=>`<div class="tw">${h}</div>`;
+
+/* ---------- Admin ---------- */
+async function vAdmin(el){const r=await api('users');if(!r)return;D.u=r;const p=r.filter(x=>x.status=='pending');
+el.innerHTML=`${p.length?`<div class="nudge">มี <b>${p.length}</b> คำขอรอการอนุมัติ — ตอบรับหรือปฏิเสธได้จากตารางด้านล่าง</div>`:'<div class="nudge">ไม่มีคำขอค้างอยู่ ทุกอย่างเรียบร้อยดี</div>'}
+<div class="card"><h2>ผู้ใช้ทั้งหมด</h2>${r.length?`<div class="tw"><table><tr><th>ชื่อผู้ใช้</th><th>ชื่อ</th><th>บทบาท</th><th>สถานะ</th><th></th></tr>${r.sort((a,b)=>(b.status=='pending')-(a.status=='pending')).map((x,i)=>`<tr><td>${esc(x.username)}</td><td>${esc(x.name)}</td><td>${ROLE[x.role]}</td><td><span class="badge ${x.status}">${{pending:'รออนุมัติ',approved:'อนุมัติแล้ว',rejected:'ปฏิเสธ'}[x.status]}</span></td><td class="row">
+${x.status!='approved'?`<button class="btn sm ok" onclick="setSt(${i},'approved')">ยอมรับ</button>`:''}${x.status!='rejected'?`<button class="btn sm ghost" onclick="setSt(${i},'rejected')">ปฏิเสธ</button>`:''}<button class="btn sm bad" onclick="setSt(${i},'delete')">ลบ</button></td></tr>`).join('')}</table></div>`:'<p class="mut">ยังไม่มีผู้สมัคร</p>'}</div>`;
+D.u=r}
+async function setSt(i,s){const x=D.u.sort((a,b)=>(b.status=='pending')-(a.status=='pending'))[i];
+if(s=='delete'&&!await confirmBox('ลบผู้ใช้',`ลบ ${esc(x.name)} ออกจากระบบ?`,'ลบ'))return;
+if(await api('setStatus',{username:x.username,status:s})){toast(s=='approved'?'อนุมัติแล้ว':s=='rejected'?'ปฏิเสธแล้ว':'ลบแล้ว','s');reload()}}
+
+/* ---------- Academic ---------- */
+async function vSubjects(el){const [t,s]=await Promise.all([api('teachers'),api('subjects')]);if(!t||!s)return;D.s=s;D.t=t;
+el.innerHTML=`<div class="card" id="fs"><h2>เพิ่มรายวิชา</h2><div class="g3">${sel('กลุ่มสาระ','group',GR)}${fld('ชื่อรายวิชา','name')}${fld('รหัสวิชา','code')}${lvSel('ระดับชั้น/ห้อง','level')}${sel('ครูผู้สอน','teacher',t.length?t:[['','ยังไม่มีครูที่อนุมัติ']])}${fld('รหัสยืนยัน','confirm','','password')}</div><button class="btn" id="as">เพิ่มรายวิชา</button></div>
+<div class="card"><h2>รายวิชาทั้งหมด (${s.length})</h2>${s.length?`<div class="tw"><table><tr><th>รหัส</th><th>ชื่อวิชา</th><th>กลุ่มสาระ</th><th>ชั้น</th><th>ครู</th><th></th></tr>${s.map((x,i)=>`<tr><td>${esc(x.code)}</td><td>${esc(x.name)}</td><td>${esc(x.group)}</td><td>${esc(x.level)}</td><td>${esc(x.teacher)}</td><td class="row"><button class="btn sm ghost" onclick="editSub(${i})">แก้ไข</button><button class="btn sm bad" onclick="delSub(${i})">ลบ</button></td></tr>`).join('')}</table></div>`:'<p class="mut">เริ่มจากเพิ่มรายวิชาแรกด้านบน</p>'}</div>`;
+$('#as').onclick=async()=>{if(await api('addSubject',fv($('#fs')))){toast('เพิ่มรายวิชาแล้ว','s');reload()}}}
+async function editSub(i){const x=D.s[i];const v=await modal('แก้ไขรายวิชา',sel('กลุ่มสาระ','group',GR,x.group)+fld('ชื่อรายวิชา','name',x.name)+fld('รหัสวิชา','code',x.code)+lvSel('ระดับชั้น/ห้อง','level',x.level)+sel('ครูผู้สอน','teacher',D.t.includes(x.teacher)?D.t:[x.teacher,...D.t],x.teacher),'บันทึก');
+if(v&&await api('updSubject',Object.assign(v,{id:x.id}))){toast('บันทึกแล้ว','s');reload()}}
+async function delSub(i){const x=D.s[i];const v=await modal('ลบรายวิชา',`<p>ลบ ${esc(x.name)} พร้อมข้อมูลเช็คชื่อและภาระงานทั้งหมดของวิชานี้</p>`+fld('รหัสยืนยัน','confirm','','password'),'ลบ');
+if(v&&await api('delSubject',{id:x.id,confirm:v.confirm})){toast('ลบแล้ว','s');reload()}}
+
+async function vStudents(el){
+el.innerHTML=`<div class="card"><div class="row"><div class="sp">${lvSel('ดูนักเรียนระดับชั้น','level')}</div><button class="btn ghost" id="sh">แสดง</button><button class="btn gold" id="ad">+ เพิ่มนักเรียน</button></div></div><div id="sl"></div>`;
+const show=async()=>{const l=el.querySelector('[name=level]').value;const r=await api('students',{level:l});if(!r)return;D.st=r;
+$('#sl').innerHTML=`<div class="card"><h2>${l} · ${r.length} คน</h2>${r.length?`<div class="tw"><table><tr><th>เลขที่</th><th>รหัส</th><th>ชื่อ</th><th>ชั้น</th><th></th></tr>${r.map((x,i)=>`<tr><td>${esc(x.no)}</td><td>${esc(x.id)}</td><td>${esc(x.name)}</td><td>${esc(x.level)}</td><td class="row"><button class="btn sm ghost" onclick="editSt(${i})">แก้ไข</button><button class="btn sm bad" onclick="delSt(${i})">ลบ</button></td></tr>`).join('')}</table></div>`:'<p class="mut">ห้องนี้ยังไม่มีนักเรียน กด “เพิ่มนักเรียน” ได้เลย</p>'}</div>`};
+$('#sh').onclick=show;$('#ad').onclick=()=>addSt(el.querySelector('[name=level]').value,show);show()}
+function addRow(){const tb=document.querySelector('.md tbody'),n=tb.rows.length+1;const tr=tb.insertRow();const lv=document.querySelector('.md [name=level]').value;
+tr.innerHTML=`<td><input class="i0" placeholder="รหัส"></td><td><input class="i1" placeholder="ชื่อ-นามสกุล"></td><td class="lv">${esc(lv)}</td><td><input class="i2" type="number" value="${n}" style="width:70px"></td>`}
+async function addSt(l,show){const v=await modal('เพิ่มนักเรียน',`${lvSel('ระดับชั้น','level',l)}<div class="tw"><table><thead><tr><th>รหัสนักเรียน</th><th>ชื่อ</th><th>ชั้น</th><th>เลขที่</th></tr></thead><tbody></tbody></table></div><button class="btn ghost sm" type="button" onclick="addRow()">+ เพิ่มแถว</button><div style="margin-top:.8rem">${fld('รหัสยืนยัน','confirm','','password')}</div>`,'บันทึกนักเรียน',m=>({level:m.querySelector('[name=level]').value,confirm:m.querySelector('[name=confirm]').value,list:[...m.querySelectorAll('tbody tr')].map(r=>({id:r.querySelector('.i0').value,name:r.querySelector('.i1').value,no:r.querySelector('.i2').value}))}));
+if(v&&await api('addStudents',v)){toast('เพิ่มนักเรียนแล้ว','s');show()}}
+document.addEventListener('change',e=>{if(e.target.matches('.md [name=level]'))document.querySelectorAll('.md td.lv').forEach(c=>c.textContent=e.target.value)});
+document.addEventListener('click',e=>{if(e.target.textContent=='ยกเลิก')return});
+const _m=modal;modal=function(t,b,o,g){const p=_m(t,b,o,g);setTimeout(()=>{if(document.querySelector('.md tbody'))addRow()},0);return p};
+async function editSt(i){const x=D.st[i];const v=await modal('แก้ไขนักเรียน',fld('ชื่อ','name',x.name)+lvSel('ชั้น','level',x.level)+fld('เลขที่','no',x.no,'number'),'บันทึก');
+if(v&&await api('updStudent',Object.assign(v,{id:x.id}))){toast('บันทึกแล้ว','s');$('#sh').click()}}
+async function delSt(i){const x=D.st[i];if(await confirmBox('ลบนักเรียน',`ลบ ${esc(x.name)} และประวัติการเช็คชื่อ/ส่งงานทั้งหมด?`,'ลบ')&&await api('delStudent',{id:x.id})){toast('ลบแล้ว','s');$('#sh').click()}}
+
+async function vSummary(el){
+el.innerHTML=`<div class="card"><h2>สรุปการเช็คชื่อ</h2><div class="g3">${lvSel('ระดับชั้น/ห้อง','level')}${fld('วันที่ (เว้นว่าง = ทุกวัน)','date','','date')}</div><button class="btn" id="go">ดูสรุป</button></div><div id="sm"></div>`;
+$('#go').onclick=async()=>{const r=await api('summary',fv(el));if(!r)return;const tot=ST.map(s=>r.rows.reduce((a,x)=>a+x.c[s],0));
+$('#sm').innerHTML=`<div class="card"><div class="row" style="margin-bottom:.8rem">${ST.map((s,i)=>`<span class="badge ${['done','rejected','late',''][i]}">${s} ${tot[i]}</span>`).join('')}<span class="mut">นักเรียนในห้อง ${r.total} คน</span></div>${r.rows.length?`<div class="tw"><table><tr><th>วันที่</th><th>คาบ</th><th>วิชา</th><th>ครู</th>${ST.map(s=>`<th>${s}</th>`).join('')}</tr>${r.rows.map(x=>`<tr><td>${x.date}</td><td>${x.period}</td><td>${esc(x.code)} ${esc(x.name)}</td><td>${esc(x.teacher)}</td>${ST.map(s=>`<td>${x.c[s]}</td>`).join('')}</tr>`).join('')}</table></div>`:'<p class="mut">ยังไม่มีข้อมูลเช็คชื่อตามเงื่อนไขนี้</p>'}</div>`}}
+
+/* ---------- Teacher ---------- */
+async function vCheck(el){const s=await api('subjects');if(!s)return;
+if(!s.length){el.innerHTML='<div class="nudge">ยังไม่มีรายวิชาที่ฝ่ายวิชาการมอบหมายให้คุณ รอสักครู่แล้วลองใหม่นะ</div>';return}
+el.innerHTML=`<div class="card" id="cf"><h2>เช็คชื่อ</h2><div class="g3">${sel('รายวิชา','subjectId',s.map(x=>[x.id,`${x.code} ${x.name} (${x.level})`]))}${fld('วันที่','date',today(),'date')}${fld('คาบที่','period','1','number')}</div><button class="btn" id="ld">โหลดรายชื่อ</button></div><div id="ro"></div>`;
+$('#ld').onclick=async()=>{const q=fv($('#cf'));const r=await api('roster',q);if(!r)return;const t=r.task||{};
+if(!r.students.length){$('#ro').innerHTML='<div class="nudge">ห้องนี้ยังไม่มีรายชื่อนักเรียน แจ้งฝ่ายวิชาการเพื่อเพิ่มก่อน</div>';return}
+$('#ro').innerHTML=`${r.saved?'<div class="nudge">คาบนี้เคยเช็คชื่อแล้ว — แก้ไขแล้วกดบันทึกเพื่ออัปเดตได้</div>':''}<div class="card"><div class="row"><h2 class="sp">รายชื่อ ${r.students.length} คน</h2><button class="btn ghost sm" id="all">มาทั้งหมด</button></div><div class="tw"><table>${r.students.map((x,i)=>`<tr><td>${esc(x.no)}</td><td>${esc(x.name)}</td><td class="att">${ST.map((s,j)=>`<label class="${CLS[j]}"><input type="radio" name="r${i}" value="${s}" ${x.st==s?'checked':''}><span>${s}</span></label>`).join('')}</td></tr>`).join('')}</table></div></div>
+<div class="card" id="tf"><h2>วันนี้เรียนอะไร</h2>${fld('เนื้อหาที่เรียน','topic',t.topic)}${fld('การบ้าน/ภาระงาน','homework',t.homework)}${fld('กำหนดส่ง','due',t.due,'date')}<button class="btn gold" id="sv">บันทึกเช็คชื่อและภาระงาน</button></div>`;
+$('#all').onclick=()=>document.querySelectorAll('.att input[value="มา"]').forEach(i=>i.checked=true);
+$('#sv').onclick=async()=>{const rec=r.students.map((x,i)=>({id:x.id,st:document.querySelector(`[name=r${i}]:checked`).value}));const o=await api('saveAtt',Object.assign({},q,fv($('#tf')),{records:rec}));
+if(o){toast(`บันทึกแล้ว: มา ${o.c['มา']} · ขาด ${o.c['ขาด']} · สาย ${o.c['สาย']} · ลา ${o.c['ลา']}`,'s');burst({target:$('#sv')})}}}}
+
+async function vTasks(el){const [t,s]=await Promise.all([api('tasks'),api('subjects')]);if(!t||!s)return;D.k=t;D.sb=s;
+el.innerHTML=`<div class="card"><div class="row"><h2 class="sp">ภาระงานที่สั่งไว้ (${t.length})</h2><button class="btn gold" id="nt">+ เพิ่มภาระงาน</button></div>${t.length?`<div class="tw"><table><tr><th>วันที่</th><th>วิชา</th><th>เรียน</th><th>การบ้าน</th><th>ส่งก่อน</th><th>ส่งแล้ว</th><th></th></tr>${t.map((x,i)=>`<tr><td>${x.date}</td><td>${esc(x.subjectName)}<div class="mut">${esc(x.level)}</div></td><td>${esc(x.topic)}</td><td>${esc(x.homework)}</td><td>${x.due||'-'}</td><td>${x.sent}/${x.total}</td><td class="row"><button class="btn sm ghost" onclick="editTk(${i})">แก้ไข</button><button class="btn sm bad" onclick="delTk(${i})">ลบ</button></td></tr>`).join('')}</table></div>`:'<p class="mut">ยังไม่มีภาระงาน กด “เพิ่มภาระงาน” หรือบันทึกพร้อมเช็คชื่อได้</p>'}</div>`;
+$('#nt').onclick=async()=>{if(!s.length)return toast('ยังไม่มีรายวิชา','e');const v=await modal('เพิ่มภาระงาน',sel('รายวิชา','subjectId',s.map(x=>[x.id,`${x.code} ${x.name} (${x.level})`]))+fld('เนื้อหาที่เรียน','topic')+fld('การบ้าน/ภาระงาน','homework')+fld('กำหนดส่ง','due','','date'),'เพิ่ม');
+if(v&&await api('addTask',v)){toast('เพิ่มภาระงานแล้ว','s');reload()}}}
+async function editTk(i){const x=D.k[i];const v=await modal('แก้ไขภาระงาน',fld('วันที่','date',x.date,'date')+fld('คาบ','period',x.period,'number')+fld('เนื้อหาที่เรียน','topic',x.topic)+fld('การบ้าน/ภาระงาน','homework',x.homework)+fld('กำหนดส่ง','due',x.due,'date'),'บันทึก');
+if(v&&await api('updTask',Object.assign(v,{id:x.id}))){toast('บันทึกแล้ว','s');reload()}}
+async function delTk(i){const x=D.k[i];if(await confirmBox('ลบภาระงาน','ลบภาระงานนี้และสถานะการส่งของนักเรียน?','ลบ')&&await api('delTask',{id:x.id})){toast('ลบแล้ว','s');reload()}}
+
+/* ---------- Student ---------- */
+const SL={pending:'ยังไม่ทำ',done:'ส่งแล้ว',late:'ส่งสาย'};
+async function vMine(el){const r=await api('tasks');if(!r)return;if(r.noReg){el.innerHTML='<div class="nudge">ฝ่ายวิชาการยังไม่ได้ลงทะเบียนรหัสนักเรียนของคุณ โปรดติดต่อฝ่ายวิชาการ</div>';return}
+D.m=r.tasks;const subs=[...new Set(r.tasks.map(t=>t.subjectName))];D.f=D.f||'';const left=r.tasks.filter(t=>t.status=='pending').length;
+const list=r.tasks.map((t,i)=>[t,i]).filter(([t])=>!D.f||t.subjectName==D.f);
+el.innerHTML=`<div class="nudge">${!r.tasks.length?'ยังไม่มีงานในตอนนี้ พักผ่อนได้เลย 🌿':left?`เหลืออีก <b>${left}</b> งาน — เริ่มจากงานที่ใกล้กำหนดส่งก่อนนะ 💪`:'ส่งครบทุกงานแล้ว เยี่ยมมาก! 🎉'}</div>
+<div class="chips"><button class="ch ${D.f?'':'on'}" onclick="D.f='';reload()">ทุกวิชา</button>${subs.map(s=>`<button class="ch ${D.f==s?'on':''}" onclick="D.f=this.dataset.s;reload()" data-s="${esc(s)}">${esc(s)}</button>`).join('')}</div>
+${list.map(([t,i])=>{const over=t.status=='pending'&&t.due&&t.due<today();return`<div class="task"><div class="sp"><b>${esc(t.subjectName)}</b> <span class="mut">${t.date}</span><div>${t.topic?`เรียน: ${esc(t.topic)}`:''}</div><div>${t.homework?`งาน: <b>${esc(t.homework)}</b>`:''}</div><div class="mut">กำหนดส่ง ${t.due||'-'}</div></div>
+<span class="badge ${over?'over':t.status}">${over?'เลยกำหนด':SL[t.status]}</span>${t.status=='pending'?`<button class="btn sm ok" onclick="sendTk(${i},event)">ส่งงาน</button>`:`<button class="btn sm ghost" onclick="undoTk(${i})">ยกเลิก</button>`}</div>`}).join('')}`}
+async function sendTk(i,e){const o=await api('submit',{id:D.m[i].id});if(o){if(o.status=='late')toast('ส่งแล้ว แต่เลยกำหนดไปนิดนะ คราวหน้าเร็วขึ้นอีกหน่อย','i');else{toast('ส่งงานสำเร็จ เก่งมาก!','s');burst(e)}setTimeout(reload,500)}}
+async function undoTk(i){if(await confirmBox('ยกเลิกการส่งงาน','ต้องการยกเลิกสถานะส่งงานนี้?')&&await api('submit',{id:D.m[i].id,undo:1})){toast('ยกเลิกแล้ว','s');reload()}}
+async function vStats(el){const r=await api('tasks');if(!r)return;const t=r.tasks,g=s=>t.filter(x=>x.status==s),n=t.length,d=g('done').length+g('late').length,p=n?d/n:0;
+const col=(h,a)=>`<div class="card"><h3>${h} (${a.length})</h3>${a.length?a.map(x=>`<div class="mut" style="margin-bottom:.3rem"><b style="color:var(--ink)">${esc(x.subjectName)}</b> ${esc(x.homework||x.topic)}${x.due?` · ${x.due}`:''}</div>`).join(''):'<span class="mut">-</span>'}</div>`;
+el.innerHTML=`<div class="card row"><svg class="ring" viewBox="0 0 100 100"><circle class="t" cx="50" cy="50" r="42"/><circle class="v" cx="50" cy="50" r="42" transform="rotate(-90 50 50)" style="stroke-dashoffset:264"/><text x="50" y="56" text-anchor="middle" font-size="20" font-family="Prompt" fill="#14284b">${Math.round(p*100)}%</text></svg><div><h2>ความคืบหน้างานทั้งหมด</h2><div class="mut">ส่งแล้ว ${d} จาก ${n} งาน</div></div></div>
+<div class="g3" style="gap:1rem">${col('ส่งแล้ว',g('done'))}${col('ส่งสาย',g('late'))}${col('ยังไม่ทำ',g('pending'))}</div>`;
+setTimeout(()=>{const v=el.querySelector('.v');if(v)v.style.strokeDashoffset=264*(1-p)},60)}
+
+authView();
+</script></body></html>
